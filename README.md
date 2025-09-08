@@ -3,33 +3,33 @@
 This project creates a 6-container SONiC network topology using Docker Compose with the following layout:
 
 ```
-    A
+    1
    / \
-  B   E
+  2   5
   |   |
-  C   F
+  3   6
    \ /
-    D
+    4
 ```
 
 ## Topology Description
 
-- **Path 1**: A -> B -> C -> D
-- **Path 2**: A -> E -> F -> D
-- **Dual paths** from container A to container D for redundancy
+- **Path 1**: sonic-1 -> sonic-2 -> sonic-3 -> sonic-4
+- **Path 2**: sonic-1 -> sonic-5 -> sonic-6 -> sonic-4
+- **Dual paths** from sonic-1 to sonic-4 for redundancy
 - **Management network** shared across all containers (172.20.0.0/16)
-- **Data interfaces** without IP addresses (handled by SONiC internally)
+- **Data interfaces** with structured IP addressing scheme
 
 ## Container Details
 
 | Container | Hostname | Management IP | SSH Port | REST Port | gNMI Port | Telnet Port |
 |-----------|----------|---------------|----------|-----------|-----------|-------------|
-| sonic-a   | sonic-a  | 172.20.0.10   | 2201     | 8001      | 9001      | 2301        |
-| sonic-b   | sonic-b  | 172.20.0.20   | 2202     | 8002      | 9002      | 2302        |
-| sonic-c   | sonic-c  | 172.20.0.30   | 2203     | 8003      | 9003      | 2303        |
-| sonic-d   | sonic-d  | 172.20.0.40   | 2204     | 8004      | 9004      | 2304        |
-| sonic-e   | sonic-e  | 172.20.0.50   | 2205     | 8005      | 9005      | 2305        |
-| sonic-f   | sonic-f  | 172.20.0.60   | 2206     | 8006      | 9006      | 2306        |
+| sonic-1   | sonic-1  | 172.20.0.11   | 2201     | 8001      | 9001      | 2301        |
+| sonic-2   | sonic-2  | 172.20.0.12   | 2202     | 8002      | 9002      | 2302        |
+| sonic-3   | sonic-3  | 172.20.0.13   | 2203     | 8003      | 9003      | 2303        |
+| sonic-4   | sonic-4  | 172.20.0.14   | 2204     | 8004      | 9004      | 2304        |
+| sonic-5   | sonic-5  | 172.20.0.15   | 2205     | 8005      | 9005      | 2305        |
+| sonic-6   | sonic-6  | 172.20.0.16   | 2206     | 8006      | 9006      | 2306        |
 
 ## Features Enabled
 
@@ -62,8 +62,15 @@ This project creates a 6-container SONiC network topology using Docker Compose w
 
 3. **Access containers via SSH**:
    ```bash
-   # Example: Access container A
+   # Example: Access sonic-1
    ssh admin@localhost -p 2201
+   
+   # Access other containers
+   ssh admin@localhost -p 2202  # sonic-2
+   ssh admin@localhost -p 2203  # sonic-3
+   ssh admin@localhost -p 2204  # sonic-4
+   ssh admin@localhost -p 2205  # sonic-5
+   ssh admin@localhost -p 2206  # sonic-6
    ```
 
 4. **Stop the topology**:
@@ -77,21 +84,34 @@ This project creates a 6-container SONiC network topology using Docker Compose w
 - **Subnet**: 172.20.0.0/16
 - **Purpose**: Out-of-band management access
 - **Gateway**: 172.20.0.1
+- **Container IPs**: 172.20.0.11 - 172.20.0.16
 
 ### Data Networks
-- **link_a_b**: Connects sonic-a and sonic-b
-- **link_b_c**: Connects sonic-b and sonic-c
-- **link_c_d**: Connects sonic-c and sonic-d
-- **link_a_e**: Connects sonic-a and sonic-e
-- **link_e_f**: Connects sonic-e and sonic-f
-- **link_f_d**: Connects sonic-f and sonic-d
+
+The data networks use a structured IP addressing scheme: `192.X.Y.Z`
+- **X**: Lower node index
+- **Y**: Higher node index  
+- **Z**: 10 + node index (11-16)
+- **Subnet**: /24 for each link
+
+| Network | Subnet | Connected Containers | IP Assignments |
+|---------|--------|---------------------|----------------|
+| link_1_2 | 192.1.2.0/24 | sonic-1 ↔ sonic-2 | sonic-1: 192.1.2.11<br>sonic-2: 192.1.2.12 |
+| link_2_3 | 192.2.3.0/24 | sonic-2 ↔ sonic-3 | sonic-2: 192.2.3.12<br>sonic-3: 192.2.3.13 |
+| link_3_4 | 192.3.4.0/24 | sonic-3 ↔ sonic-4 | sonic-3: 192.3.4.13<br>sonic-4: 192.3.4.14 |
+| link_1_5 | 192.1.5.0/24 | sonic-1 ↔ sonic-5 | sonic-1: 192.1.5.11<br>sonic-5: 192.1.5.15 |
+| link_5_6 | 192.5.6.0/24 | sonic-5 ↔ sonic-6 | sonic-5: 192.5.6.15<br>sonic-6: 192.5.6.16 |
+| link_6_4 | 192.4.6.0/24 | sonic-6 ↔ sonic-4 | sonic-6: 192.4.6.16<br>sonic-4: 192.4.6.14 |
 
 All data networks are internal bridges without external connectivity.
 
 ## Configuration Files
 
-Each container has its own configuration directory under `configs/sonic-[a-f]/`:
+Each container has its own configuration directory under `configs/sonic-[1-6]/`:
 - `config_db.json`: Main SONiC configuration database
+- `bgpd.conf`: FRR BGP configuration (where applicable)
+- `startup.sh`: Container startup script
+- Other SONiC configuration files
 
 ## Common Operations
 
@@ -101,16 +121,24 @@ Each container has its own configuration directory under `configs/sonic-[a-f]/`:
 docker-compose logs
 
 # Specific container
-docker-compose logs sonic-a
+docker-compose logs sonic-1
 ```
 
 ### Executing Commands
 ```bash
 # Enter container shell
-docker exec -it sonic-a bash
+docker exec -it sonic-1 bash
 
 # Run SONiC CLI
-docker exec -it sonic-a sonic-cli
+docker exec -it sonic-1 sonic-cli
+```
+
+### Network Connectivity Testing
+```bash
+# Test connectivity between containers via data links
+docker exec -it sonic-1 ping 192.1.2.12  # sonic-1 to sonic-2
+docker exec -it sonic-2 ping 192.2.3.13  # sonic-2 to sonic-3
+docker exec -it sonic-1 ping 192.1.5.15  # sonic-1 to sonic-5 (alternate path)
 ```
 
 ### BGP Configuration
