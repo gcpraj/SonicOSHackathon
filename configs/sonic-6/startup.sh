@@ -11,18 +11,18 @@ if [ -f /etc/sonic/daemons ]; then
     echo "FRR daemons configuration updated"
 fi
 
-# Flush eth1 and eth2 interfaces (leaving eth0 for management)
-echo "Flushing data interfaces..."
-for iface in eth1 eth2; do
-    if ip link show $iface >/dev/null 2>&1; then
-        ip addr flush dev $iface 2>/dev/null || true
-        ip link set $iface down 2>/dev/null || true
-        ip link set $iface up 2>/dev/null || true
-        echo "Interface $iface flushed and reset"
-    else
-        echo "Interface $iface not found"
-    fi
-done
+# Configure network interfaces
+echo "Bringing up network interfaces..."
+
+# Configure data interfaces - bring them up without static IPs
+echo "Bringing up data interfaces..."
+ip link set eth1 up 2>/dev/null || true
+ip link set eth2 up 2>/dev/null || true
+
+echo "Data interfaces brought up:"
+echo "  eth0: Management interface"
+echo "  eth1: Data interface up"
+echo "  eth2: Data interface up"
 
 # Set up SSH users and configuration
 echo "Setting up SSH..."

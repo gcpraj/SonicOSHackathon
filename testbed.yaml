@@ -8,10 +8,24 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.11
+        ip: localhost
         port: 2201
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2201
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []
 
   sonic-2:
     type: sonic
@@ -19,10 +33,24 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.12
+        ip: localhost
         port: 2202
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2202
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []
 
   sonic-3:
     type: sonic
@@ -30,10 +58,24 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.13
+        ip: localhost
         port: 2203
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2203
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []
 
   sonic-4:
     type: sonic
@@ -41,10 +83,24 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.14
+        ip: localhost
         port: 2204
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2204
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []
 
   sonic-5:
     type: sonic
@@ -52,10 +108,24 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.15
+        ip: localhost
         port: 2205
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2205
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []
 
   sonic-6:
     type: sonic
@@ -63,7 +133,21 @@ devices:
     connections:
       default:
         protocol: ssh
-        ip: 172.20.0.16
+        ip: localhost
         port: 2206
-        username: admin
+        username: root
         password: admin
+        arguments:
+          init_exec_commands:
+            - 'vtysh'
+          init_config_commands: []
+      bash:
+        protocol: ssh
+        ip: localhost
+        port: 2206
+        username: root
+        password: admin
+        os: linux
+        arguments:
+          init_exec_commands: []
+          init_config_commands: []

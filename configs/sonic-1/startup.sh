@@ -11,6 +11,19 @@ if [ -f /etc/sonic/daemons ]; then
     echo "FRR daemons configuration updated"
 fi
 
+# Configure network interfaces
+echo "Bringing up network interfaces..."
+
+# Configure data interfaces - bring them up without static IPs
+echo "Bringing up data interfaces..."
+ip link set eth1 up 2>/dev/null || true
+ip link set eth2 up 2>/dev/null || true
+
+echo "Data interfaces brought up:"
+echo "  eth0: Management interface"
+echo "  eth1: Data interface up"
+echo "  eth2: Data interface up"
+
 # Set up SSH users and configuration
 echo "Setting up SSH..."
 
