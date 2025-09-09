@@ -1,0 +1,8 @@
+# Development dependencies
+# Add development-only packages here
+# Example:
+# pytest
+# black
+# flake8
+# mypy
+# pre-commit

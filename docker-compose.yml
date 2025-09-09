@@ -1,0 +1,242 @@
+networks:
+  mgmt:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  
+  # Data networks connecting the containers
+  link_1_2:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.1.2.0/24
+  
+  link_2_3:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.2.3.0/24
+  
+  link_3_4:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.3.4.0/24
+  
+  link_1_5:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.1.5.0/24
+  
+  link_5_6:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.5.6.0/24
+  
+  link_6_4:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.4.6.0/24
+
+services:
+  sonic-1:
+    image: docker-sonic-vs
+    container_name: sonic-1
+    hostname: sonic-1
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.11
+      link_1_2:
+        ipv4_address: 192.1.2.11
+      link_1_5:
+        ipv4_address: 192.1.5.11
+    ports:
+      - "2201:22"     # SSH
+      - "8001:80"     # REST API
+      - "4431:443"    # HTTPS REST API
+      - "9001:9339"   # gNMI
+      - "2301:23"     # Telnet
+    volumes:
+      - ./configs/sonic-1:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+
+  sonic-2:
+    image: docker-sonic-vs
+    container_name: sonic-2
+    hostname: sonic-2
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.12
+      link_1_2:
+        ipv4_address: 192.1.2.12
+      link_2_3:
+        ipv4_address: 192.2.3.12
+    ports:
+      - "2202:22"     # SSH
+      - "8002:80"     # REST API
+      - "4432:443"    # HTTPS REST API
+      - "9002:9339"   # gNMI
+      - "2302:23"     # Telnet
+    volumes:
+      - ./configs/sonic-2:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+
+  sonic-3:
+    image: docker-sonic-vs
+    container_name: sonic-3
+    hostname: sonic-3
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.13
+      link_2_3:
+        ipv4_address: 192.2.3.13
+      link_3_4:
+        ipv4_address: 192.3.4.13
+    ports:
+      - "2203:22"     # SSH
+      - "8003:80"     # REST API
+      - "4433:443"    # HTTPS REST API
+      - "9003:9339"   # gNMI
+      - "2303:23"     # Telnet
+    volumes:
+      - ./configs/sonic-3:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+
+  sonic-4:
+    image: docker-sonic-vs
+    container_name: sonic-4
+    hostname: sonic-4
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.14
+      link_3_4:
+        ipv4_address: 192.3.4.14
+      link_6_4:
+        ipv4_address: 192.4.6.14
+    ports:
+      - "2204:22"     # SSH
+      - "8004:80"     # REST API
+      - "4434:443"    # HTTPS REST API
+      - "9004:9339"   # gNMI
+      - "2304:23"     # Telnet
+    volumes:
+      - ./configs/sonic-4:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+
+  sonic-5:
+    image: docker-sonic-vs
+    container_name: sonic-5
+    hostname: sonic-5
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.15
+      link_1_5:
+        ipv4_address: 192.1.5.15
+      link_5_6:
+        ipv4_address: 192.5.6.15
+    ports:
+      - "2205:22"     # SSH
+      - "8005:80"     # REST API
+      - "4435:443"    # HTTPS REST API
+      - "9005:9339"   # gNMI
+      - "2305:23"     # Telnet
+    volumes:
+      - ./configs/sonic-5:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+
+  sonic-6:
+    image: docker-sonic-vs
+    container_name: sonic-6
+    hostname: sonic-6
+    privileged: true
+    networks:
+      mgmt:
+        ipv4_address: 172.20.0.16
+      link_5_6:
+        ipv4_address: 192.5.6.16
+      link_6_4:
+        ipv4_address: 192.4.6.16
+    ports:
+      - "2206:22"     # SSH
+      - "8006:80"     # REST API
+      - "4436:443"    # HTTPS REST API
+      - "9006:9339"   # gNMI
+      - "2306:23"     # Telnet
+    volumes:
+      - ./configs/sonic-6:/etc/sonic:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/bash", "-c", "/etc/sonic/startup.sh && /usr/local/bin/supervisord"]
+    environment:
+      - SONIC_ENABLE_FRR=yes
+      - SONIC_ENABLE_BGP=yes
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1

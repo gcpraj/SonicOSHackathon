@@ -1,0 +1,73 @@
+{
+    "DEVICE_METADATA": {
+        "localhost": {
+            "mac": "96:69:7c:9a:49:65",
+            "switch_type": "switch",
+            "buffer_model": "traditional",
+            "hostname": "sonic-4",
+            "type": "ToRRouter",
+            "docker_routing_config_mode": "unified"
+        }
+    },
+    "FEATURE": {
+        "swss": {
+            "state": "enabled",
+            "auto_restart": "enabled"
+        },
+        "bgp": {
+            "state": "enabled",
+            "auto_restart": "enabled"
+        },
+        "teamd": {
+            "state": "enabled",
+            "auto_restart": "enabled"
+        },
+        "nat": {
+            "state": "enabled"
+        },
+        "database": {
+            "state": "always_enabled",
+            "auto_restart": "disabled"
+        },
+        "lldp": {
+            "state": "enabled",
+            "auto_restart": "enabled"
+        },
+        "dhcp_relay": {
+            "state": "disabled",
+            "auto_restart": "enabled"
+        },
+        "macsec": {
+            "state": "enabled"
+        },
+        "pmon": {
+            "auto_restart": "enabled",
+            "state": "enabled"
+        },
+        "radv": {
+            "auto_restart": "enabled",
+            "state": "disabled"
+        },
+        "snmp": {
+            "auto_restart": "enabled",
+            "state": "enabled"
+        },
+        "ssh": {
+            "auto_restart": "enabled",
+            "state": "enabled"
+        },
+        "syncd": {
+            "auto_restart": "enabled",
+            "state": "enabled"
+        },
+        "telemetry": {
+            "auto_restart": "enabled",
+            "state": "enabled"
+        }
+    },
+    "MGMT_INTERFACE": {
+        "eth0|172.20.0.40/16": {
+            "gwaddr": "172.20.0.1"
+        }
+    }
+}

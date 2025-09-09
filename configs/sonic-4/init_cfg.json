@@ -1,0 +1,27 @@
+{
+    "DEVICE_METADATA": {
+        "localhost": {
+            "mac": "c6:06:b2:40:72:05",
+            "switch_type": "switch",
+            "buffer_model": "traditional"
+        }
+    },
+    "FEATURE": {
+        "swss": {
+            "state": "enabled"
+        },        "bgp": {
+            "state": "enabled"
+        },        "teamd": {
+            "state": "enabled"
+        },        "nat": {
+            "state": "enabled"
+        },        "database": {
+            "state": "enabled"
+        },        "lldp": {
+            "state": "enabled"
+        },        "dhcp_relay": {
+            "state": "enabled"
+        },        "macsec": {
+            "state": "enabled"
+        }    }
+}

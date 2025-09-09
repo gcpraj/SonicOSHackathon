@@ -47,8 +47,28 @@ This project creates a 6-container SONiC network topology using Docker Compose w
 1. Docker and Docker Compose installed
 2. `docker-sonic-vs` image available locally
 3. Sufficient system resources (6 containers)
+4. Python 3.8 or higher for testing framework
+5. Git for version control
 
 ## Quick Start
+
+### 1. Set up the Python testing environment
+
+Set up the Python virtual environment with pyATS for network testing:
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Upgrade pip and install dependencies
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+### 2. Start the SONiC topology
 
 1. **Start the topology**:
    ```bash
@@ -72,6 +92,21 @@ This project creates a 6-container SONiC network topology using Docker Compose w
    ssh admin@localhost -p 2205  # sonic-5
    ssh admin@localhost -p 2206  # sonic-6
    ```
+
+### 3. Run network tests
+
+With the SONiC topology running, you can execute automated tests:
+
+```bash
+# Activate the Python environment (if not already active)
+source venv/bin/activate
+
+# Run the test suite with testbed
+python tests/sonic_network_test.py --testbed testbed.yaml
+
+# Run without testbed (basic mode)
+python tests/sonic_network_test.py
+```
 
 4. **Stop the topology**:
    ```bash
@@ -134,6 +169,8 @@ docker exec -it sonic-1 sonic-cli
 ```
 
 ### Network Connectivity Testing
+
+#### Manual Testing
 ```bash
 # Test connectivity between containers via data links
 docker exec -it sonic-1 ping 192.1.2.12  # sonic-1 to sonic-2
@@ -141,15 +178,100 @@ docker exec -it sonic-2 ping 192.2.3.13  # sonic-2 to sonic-3
 docker exec -it sonic-1 ping 192.1.5.15  # sonic-1 to sonic-5 (alternate path)
 ```
 
+#### Automated Testing with pyATS
+```bash
+# Run all network tests
+source venv/bin/activate
+python tests/sonic_network_test.py --testbed testbed.yaml
+
+# View test results in terminal output
+```
+
+## Python Testing Framework
+
+This project includes a comprehensive Python testing framework using **pyATS** (Python Automated Test Systems), Cisco's testing framework designed for network automation and validation.
+
+### Testing Components
+
+1. **pyATS Framework**: Enterprise-grade testing framework for network devices
+2. **Test Scripts**: Located in `tests/` directory
+3. **Testbed Configuration**: `testbed.yaml` defines the network topology
+
+### Virtual Environment Management
+
+The project uses a Python virtual environment to isolate dependencies:
+
+- **Virtual Environment**: `venv/` (excluded from git)
+- **Requirements**: `requirements.txt` (production) and `requirements-dev.txt` (development)
+
+### For New Team Members
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd SonicOSHackathon
+
+# Set up the Python environment
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
+# Start the SONiC topology
+docker-compose up -d
+
+# Run tests
+python tests/sonic_network_test.py --testbed testbed.yaml
+```
+
+### Test Categories
+
+- **Connectivity Tests**: Verify device reachability and network links
+- **Configuration Tests**: Validate BGP, interface, and protocol configurations
+- **Topology Tests**: Ensure proper network topology and redundant paths
+- **Performance Tests**: Monitor network performance metrics (can be extended)
+
+### Adding New Tests
+
+1. Create test scripts in `tests/` directory following pyATS format
+2. Update `testbed.yaml` if new devices/connections are added
+3. Add new test methods to existing test classes
+4. Update requirements if new Python packages are needed
+
 ### BGP Configuration
 After containers are running, you can configure BGP using the SONiC CLI or vtysh as needed.
 
 ## Troubleshooting
 
+### Docker and Container Issues
 1. **Container startup issues**: Check `docker-compose logs [container-name]`
 2. **Network connectivity**: Verify bridge networks with `docker network ls`
 3. **Port conflicts**: Ensure ports 2201-2206, 8001-8006, 9001-9006, 2301-2306 are available
 4. **Resource constraints**: Monitor system resources with `docker stats`
+
+### Python Testing Issues
+1. **Virtual environment not found**: Create it with `python3 -m venv venv`
+2. **Package installation errors**: Update pip with `pip install --upgrade pip`
+3. **pyATS test failures**: Check testbed.yaml configuration and container connectivity
+4. **Path issues**: Ensure you're in the project root directory when running commands
+
+### Common Python Environment Commands
+```bash
+# Check if virtual environment is active
+which python  # Should show path to venv/bin/python
+
+# Reinstall requirements
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Reset virtual environment
+rm -rf venv
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
 
 ## Advanced Configuration
 

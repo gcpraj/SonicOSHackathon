@@ -1,0 +1,5 @@
+build_version: '1.0.0'
+product: 'virtual-switch'
+built_by: 'docker'
+build_date: '2025-09-08'
+asic_type: 'vs'
